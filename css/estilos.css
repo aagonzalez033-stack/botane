@@ -1,20 +1,19 @@
 
-/* =================================
+/* =====================================
    BOTANE - ESTILOS GENERALES
-================================= */
+   ===================================== */
 
 :root {
-    --verde-oscuro: #294735;
-    --verde: #496b50;
-    --verde-salvia: #91a58a;
-    --verde-claro: #e8eee5;
-    --beige: #f5f1e8;
-    --crema: #fbfaf6;
-    --blanco: #ffffff;
-    --texto: #39443a;
-    --gris: #777d75;
-    --borde: #e4e5dc;
-    --sombra: 0 5px 20px rgba(41, 71, 53, 0.08);
+    --verde-oscuro: #244C35;
+    --verde-hoja: #56845B;
+    --verde-salvia: #A7BD91;
+    --verde-claro: #E5EEDC;
+    --crema: #F2E8D5;
+    --blanco: #FFFEFA;
+    --tierra: #C58A52;
+    --texto: #354238;
+    --gris: #747B70;
+    --borde: #DDE5D7;
 }
 
 * {
@@ -27,59 +26,61 @@ html {
 
 body {
     margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: var(--crema);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: var(--blanco);
     color: var(--texto);
-    line-height: 1.6;
 }
 
 a {
-    color: inherit;
     text-decoration: none;
 }
 
-button,
-input {
-    font: inherit;
+img {
+    max-width: 100%;
 }
 
-/* =================================
+/* =====================================
    NAVEGACIÓN
-================================= */
+   ===================================== */
 
 .navbar {
-    background-color: var(--crema);
-    padding: 18px 0;
-    border-bottom: 1px solid var(--borde);
+    background-color: var(--verde-oscuro);
+    padding: 15px 0;
 }
 
 .navbar-brand {
-    color: var(--verde-oscuro) !important;
-    font-size: 27px;
-    font-weight: bold;
-    letter-spacing: 3px;
+    color: var(--blanco) !important;
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: 1px;
 }
 
-.nav-link {
-    color: var(--texto) !important;
-    margin: 0 8px;
-    transition: color 0.2s ease;
+.navbar .nav-link {
+    color: var(--blanco) !important;
+    font-weight: 500;
+    margin: 0 7px;
+    transition: color 0.3s;
 }
 
-.nav-link:hover {
-    color: var(--verde) !important;
+.navbar .nav-link:hover {
+    color: var(--verde-salvia) !important;
 }
 
-/* =================================
+.navbar-toggler {
+    border-color: var(--verde-salvia);
+}
+
+/* =====================================
    BOTONES
-================================= */
+   ===================================== */
 
 .btn-success {
-    background-color: var(--verde);
-    border-color: var(--verde);
+    background-color: var(--verde-hoja);
+    border-color: var(--verde-hoja);
+    color: white;
     border-radius: 25px;
     padding: 10px 22px;
+    font-weight: 600;
 }
 
 .btn-success:hover {
@@ -88,334 +89,254 @@ input {
 }
 
 .btn-outline-success {
-    color: var(--verde);
-    border-color: var(--verde);
+    color: var(--verde-oscuro);
+    border-color: var(--verde-hoja);
     border-radius: 25px;
 }
 
-.btn-outline-success:hover,
-.filtro.activo {
-    background-color: var(--verde);
-    border-color: var(--verde);
-    color: var(--blanco);
+.btn-outline-success:hover {
+    background-color: var(--verde-hoja);
+    border-color: var(--verde-hoja);
+    color: white;
 }
 
-/* =================================
-   PORTADA PRINCIPAL
-================================= */
+/* =====================================
+   PORTADA
+   ===================================== */
 
 .hero {
     background: linear-gradient(
-        110deg,
-        var(--beige),
-        var(--verde-claro)
+        120deg,
+        var(--verde-claro),
+        var(--crema)
     );
-    padding: 110px 0;
-}
-
-.hero-content {
-    max-width: 680px;
-}
-
-.hero-etiqueta {
-    color: var(--verde);
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 3px;
+    padding: 90px 20px;
+    text-align: center;
 }
 
 .hero h1 {
     color: var(--verde-oscuro);
-    font-size: clamp(36px, 5vw, 58px);
-    line-height: 1.15;
-    margin: 20px 0;
-    font-weight: bold;
+    font-size: clamp(2.3rem, 5vw, 3.8rem);
+    font-weight: 800;
+    margin-bottom: 20px;
 }
 
 .hero p {
-    color: var(--gris);
-    font-size: 18px;
-    max-width: 550px;
-    margin-bottom: 28px;
+    max-width: 650px;
+    margin: 0 auto 25px;
+    font-size: 1.1rem;
+    color: var(--texto);
 }
 
-/* =================================
-   TÍTULOS DE SECCIÓN
-================================= */
+/* =====================================
+   TÍTULOS Y SECCIONES
+   ===================================== */
 
-.titulo-seccion {
-    text-align: center;
-    margin-bottom: 40px;
+section {
+    padding: 65px 0;
 }
 
-.titulo-seccion h2 {
+.section-title {
     color: var(--verde-oscuro);
-    font-size: 32px;
-    font-weight: bold;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
-.titulo-seccion p {
+.section-description {
     color: var(--gris);
-    margin-top: 10px;
+    text-align: center;
+    margin-bottom: 35px;
 }
 
-/* =================================
+/* =====================================
    CATEGORÍAS
-================================= */
-
-.seccion-categorias {
-    padding: 75px 0;
-    background-color: var(--crema);
-}
+   ===================================== */
 
 .categoria-card {
-    display: block;
-    height: 100%;
-    padding: 30px 15px;
-    text-align: center;
-    background-color: var(--beige);
+    background-color: var(--verde-claro);
     border: 1px solid var(--borde);
-    border-radius: 14px;
-    transition: transform 0.2s ease,
-                box-shadow 0.2s ease;
+    border-radius: 18px;
+    padding: 25px;
+    text-align: center;
+    height: 100%;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .categoria-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--sombra);
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(36, 76, 53, 0.12);
 }
 
 .categoria-card h3 {
     color: var(--verde-oscuro);
-    font-size: 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
 }
 
-.categoria-card p {
-    color: var(--gris);
-    font-size: 14px;
-    margin: 0;
-}
+/* =====================================
+   CATÁLOGO Y PRODUCTOS
+   ===================================== */
 
-/* =================================
-   CATÁLOGO
-================================= */
-
-.seccion-catalogo {
-    padding: 75px 0;
-    background-color: var(--beige);
-}
-
-.buscador-productos {
-    max-width: 600px;
-    margin: 0 auto 25px;
-}
-
-.buscador-productos label {
-    color: var(--verde-oscuro);
-    font-weight: bold;
-}
-
-.buscador-productos input {
-    border-radius: 25px;
-    padding: 13px 18px;
-    border: 1px solid var(--borde);
-}
-
-.buscador-productos input:focus {
-    border-color: var(--verde);
-    box-shadow: 0 0 0 3px rgba(73, 107, 80, 0.12);
-}
-
-.filtros-productos {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 35px;
-}
-
-/* =================================
-   TARJETAS DE PRODUCTOS
-================================= */
-
-.producto-card {
-    height: 100%;
-    overflow: hidden;
+#catalogo {
     background-color: var(--blanco);
+}
+
+.card {
     border: 1px solid var(--borde);
-    border-radius: 15px;
-    box-shadow: var(--sombra);
-    transition: transform 0.2s ease;
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: white;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.producto-card:hover {
+.card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 22px rgba(36, 76, 53, 0.13);
 }
 
-.producto-imagen {
+.card-img-top {
     width: 100%;
-    height: 220px;
+    height: 230px;
     object-fit: cover;
-    background-color: var(--verde-claro);
-}
-
-.producto-info {
-    padding: 20px;
-}
-
-.producto-info h3 {
-    color: var(--verde-oscuro);
-    font-size: 19px;
-    font-weight: bold;
-}
-
-.producto-info p {
-    color: var(--gris);
-    font-size: 14px;
-}
-
-.producto-precio {
-    color: var(--verde);
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 15px;
-}
-
-.producto-card .btn {
-    width: 100%;
-}
-
-/* =================================
-   NOSOTROS
-================================= */
-
-.seccion-nosotros {
-    padding: 80px 0;
-    background-color: var(--verde-claro);
-}
-
-.nosotros-contenido {
-    max-width: 750px;
-    margin: auto;
-    text-align: center;
-    color: var(--texto);
-    font-size: 17px;
-}
-
-/* =================================
-   CONTACTO
-================================= */
-
-.seccion-contacto {
-    padding: 75px 0;
     background-color: var(--crema);
 }
 
-.contacto-contenido {
-    text-align: center;
+.card-body {
+    padding: 20px;
 }
 
-.contacto-contenido p {
-    color: var(--gris);
-    margin-bottom: 25px;
-}
-
-/* =================================
-   CARRITO
-================================= */
-
-.panel-carrito {
-    padding: 35px 0;
-    background-color: var(--verde-claro);
-    border-top: 1px solid var(--borde);
-}
-
-.panel-carrito h2 {
+.card-title {
     color: var(--verde-oscuro);
-    margin-bottom: 20px;
+    font-weight: 700;
 }
 
-/* =================================
-   PIE DE PÁGINA
-================================= */
+.card-text {
+    color: var(--gris);
+    font-size: 0.95rem;
+}
 
-.footer {
-    padding: 45px 0;
-    text-align: center;
+.card-body .fw-bold {
+    color: var(--verde-hoja);
+    font-size: 1.15rem;
+}
+
+/* =====================================
+   BUSCADOR Y FILTROS
+   ===================================== */
+
+.form-control {
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 11px 15px;
+}
+
+.form-control:focus {
+    border-color: var(--verde-hoja);
+    box-shadow: 0 0 0 0.2rem rgba(86, 132, 91, 0.15);
+}
+
+.filtro {
+    margin: 5px;
+    border-radius: 25px;
+}
+
+.filtro.activo {
+    background-color: var(--verde-oscuro);
+    color: white;
+}
+
+/* =====================================
+   NOSOTROS
+   ===================================== */
+
+#nosotros {
+    background-color: var(--crema);
+}
+
+#nosotros h2 {
+    color: var(--verde-oscuro);
+    font-weight: 800;
+}
+
+#nosotros p {
+    line-height: 1.8;
+}
+
+/* =====================================
+   CONTACTO
+   ===================================== */
+
+#contacto {
+    background-color: var(--verde-claro);
+}
+
+#contacto h2 {
+    color: var(--verde-oscuro);
+    font-weight: 800;
+}
+
+/* =====================================
+   CARRITO
+   ===================================== */
+
+#panelCarrito {
+    background-color: white;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(36, 76, 53, 0.12);
+}
+
+#totalCarrito {
+    color: var(--verde-oscuro);
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+/* =====================================
+   PIE DE PÁGINA
+   ===================================== */
+
+footer {
     background-color: var(--verde-oscuro);
     color: var(--blanco);
+    padding: 35px 15px;
+    text-align: center;
 }
 
-.footer h2 {
-    font-size: 25px;
-    letter-spacing: 4px;
+footer a {
+    color: var(--verde-salvia);
 }
 
-.footer p {
-    font-size: 14px;
-    margin: 10px 0;
+footer a:hover {
+    color: white;
 }
 
-/* =================================
-   ACCESIBILIDAD
-================================= */
-
-a:focus-visible,
-button:focus-visible,
-input:focus-visible {
-    outline: 3px solid var(--verde-salvia);
-    outline-offset: 3px;
-}
-
-/* =================================
-   DISEÑO RESPONSIVO
-================================= */
+/* =====================================
+   RESPONSIVE
+   ===================================== */
 
 @media (max-width: 768px) {
-
     .hero {
-        padding: 75px 0;
+        padding: 65px 20px;
     }
 
-    .hero h1 {
-        font-size: 38px;
+    section {
+        padding: 45px 0;
     }
 
-    .hero p {
-        font-size: 16px;
-    }
-
-    .titulo-seccion h2 {
-        font-size: 26px;
-    }
-
-    .seccion-categorias,
-    .seccion-catalogo,
-    .seccion-nosotros,
-    .seccion-contacto {
-        padding: 55px 0;
-    }
-
-    .producto-imagen {
-        height: 190px;
-    }
-
-    .filtros-productos {
-        gap: 7px;
+    .card-img-top {
+        height: 200px;
     }
 }
 
 @media (max-width: 480px) {
-
     .hero h1 {
-        font-size: 32px;
+        font-size: 2.2rem;
     }
 
     .navbar-brand {
-        font-size: 23px;
-    }
-
-    .producto-imagen {
-        height: 170px;
+        font-size: 1.4rem;
     }
 }
