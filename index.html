@@ -1,13 +1,304 @@
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+    <!-- Configuración básica -->
     <meta charset="UTF-8">
-    <title>Botane</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO -->
+    <title>Botane | Productos Naturales y Herbolarios</title>
+    <meta name="description" content="Descubre Botane, tu espacio de productos naturales, botánicos y herbolarios. Conoce nuestro catálogo y encuentra nuevas opciones para tu día a día.">
+    <meta name="keywords" content="Botane, productos naturales, herbolaria, botánica, extractos naturales, aceites vegetales">
+    <meta name="author" content="Equipo Botane">
+    <meta name="copyright" content="Botane © 2026">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos propios -->
     <link rel="stylesheet" href="css/estilos.css">
 </head>
-<body>
-    <h1>Botane</h1>
-    <p>Tienda de productos naturales.</p>
 
+<body>
+
+    <!-- ENCABEZADO -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+
+                <a class="navbar-brand" href="#inicio">
+                    BOTANE
+                </a>
+
+                <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#menuPrincipal"
+                    aria-controls="menuPrincipal"
+                    aria-expanded="false"
+                    aria-label="Abrir menú">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="menuPrincipal">
+
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#inicio">Inicio</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#catalogo">Productos</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#nosotros">Nosotros</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#contacto">Contacto</a>
+                        </li>
+                    </ul>
+
+                    <button class="btn btn-outline-success ms-lg-3"
+                        id="btnCarrito" type="button">
+                        Carrito (<span id="contadorCarrito">0</span>)
+                    </button>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+
+        <!-- PORTADA -->
+        <section id="inicio" class="hero">
+            <div class="container">
+                <div class="hero-content">
+
+                    <span class="hero-etiqueta">
+                        NATURALEZA EN CADA DETALLE
+                    </span>
+
+                    <h1>Descubre el poder de lo natural</h1>
+
+                    <p>
+                        Explora nuestra selección de productos
+                        botánicos y naturales para acompañar
+                        tu día a día.
+                    </p>
+
+                    <a href="#catalogo" class="btn btn-success">
+                        Explorar productos
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- CATEGORÍAS -->
+        <section id="categorias" class="seccion-categorias">
+            <div class="container">
+
+                <div class="titulo-seccion">
+                    <h2>Explora nuestras categorías</h2>
+                    <p>Encuentra productos que conectan con la naturaleza.</p>
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-6 col-md-3">
+                        <a href="#catalogo" class="categoria-card">
+                            <h3>Extractos</h3>
+                            <p>Preparaciones botánicas</p>
+                        </a>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <a href="#catalogo" class="categoria-card">
+                            <h3>Aceites</h3>
+                            <p>Opciones de origen vegetal</p>
+                        </a>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <a href="#catalogo" class="categoria-card">
+                            <h3>Infusiones</h3>
+                            <p>Plantas seleccionadas</p>
+                        </a>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <a href="#catalogo" class="categoria-card">
+                            <h3>Botánicos</h3>
+                            <p>Conoce nuevos productos</p>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- CATÁLOGO -->
+        <section id="catalogo" class="seccion-catalogo">
+            <div class="container">
+
+                <div class="titulo-seccion">
+                    <h2>Nuestros productos</h2>
+                    <p>Conoce nuestra selección botánica.</p>
+                </div>
+
+                <!-- BUSCADOR -->
+                <div class="buscador-productos">
+                    <label for="buscador" class="form-label">
+                        Buscar productos
+                    </label>
+
+                    <input
+                        type="search"
+                        id="buscador"
+                        class="form-control"
+                        placeholder="¿Qué estás buscando?"
+                    >
+                </div>
+
+                <!-- FILTROS -->
+                <div class="filtros-productos">
+                    <button class="btn btn-outline-success filtro activo"
+                        data-categoria="todos">
+                        Todos
+                    </button>
+
+                    <button class="btn btn-outline-success filtro"
+                        data-categoria="extractos">
+                        Extractos
+                    </button>
+
+                    <button class="btn btn-outline-success filtro"
+                        data-categoria="aceites">
+                        Aceites
+                    </button>
+
+                    <button class="btn btn-outline-success filtro"
+                        data-categoria="infusiones">
+                        Infusiones
+                    </button>
+
+                    <button class="btn btn-outline-success filtro"
+                        data-categoria="botanicos">
+                        Botánicos
+                    </button>
+                </div>
+
+                <!-- PRODUCTOS GENERADOS CON JAVASCRIPT -->
+                <div class="row g-4" id="listaProductos">
+
+                    <div class="col-12 text-center">
+                        <p>Cargando catálogo...</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- NOSOTROS -->
+        <section id="nosotros" class="seccion-nosotros">
+            <div class="container">
+
+                <div class="titulo-seccion">
+                    <h2>Conoce Botane</h2>
+                </div>
+
+                <div class="nosotros-contenido">
+                    <p>
+                        En Botane buscamos acercar el mundo
+                        de los productos naturales y botánicos
+                        a través de una experiencia de compra
+                        sencilla, informativa y accesible.
+                    </p>
+
+                    <p>
+                        Nuestro proyecto combina naturaleza,
+                        diseño y tecnología para ofrecer un
+                        espacio dedicado a explorar distintas
+                        opciones de origen botánico.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CONTACTO -->
+        <section id="contacto" class="seccion-contacto">
+            <div class="container">
+
+                <div class="titulo-seccion">
+                    <h2>Estamos para ayudarte</h2>
+                    <p>Conoce nuestros medios de contacto.</p>
+                </div>
+
+                <div class="contacto-contenido">
+                    <p>
+                        ¿Tienes dudas sobre nuestros productos?
+                        Escríbenos.
+                    </p>
+
+                    <a href="mailto:contacto@botane.com"
+                        class="btn btn-success">
+                        Enviar correo
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CARRITO -->
+        <div id="panelCarrito" class="panel-carrito" hidden>
+            <div class="container">
+                <h2>Tu carrito</h2>
+
+                <div id="contenidoCarrito">
+                    <p>Tu carrito está vacío.</p>
+                </div>
+
+                <p>
+                    Total:
+                    <strong id="totalCarrito">$0.00</strong>
+                </p>
+
+                <button id="cerrarCarrito"
+                    class="btn btn-outline-secondary">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="footer">
+        <div class="container">
+
+            <h2>BOTANE</h2>
+
+            <p>Conectando naturaleza y bienestar.</p>
+
+            <p>
+                © 2026 Botane. Todos los derechos reservados.
+            </p>
+
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script src="js/productos.js"></script>
     <script src="js/app.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
+</html>
