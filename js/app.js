@@ -10,6 +10,7 @@ let carrito = [];
 
 try {
     carrito = JSON.parse(localStorage.getItem(CLAVE_CARRITO)) || [];
+    if (!Array.isArray(carrito)) carrito = [];
 } catch (error) {
     carrito = [];
 }
@@ -245,7 +246,6 @@ function mostrarDetalleProducto() {
         agregarAlCarrito(producto.id);
         alert("Producto agregado al carrito.");
     });
-
 }
 
 // =====================================
@@ -389,6 +389,9 @@ function actualizarCarrito() {
     if (totalCompra) {
         totalCompra.textContent = formatoPrecio.format(precioTotal);
     }
+
+    // ACTUALIZAR RESUMEN DE COMPRA
+    actualizarResumenCheckout();
 }
 
 // EVENTOS DE LOS BOTONES DEL CARRITO
@@ -426,16 +429,172 @@ if (cerrarCarrito && panelCarrito) {
 }
 
 // =====================================
-// FINALIZAR COMPRA
+// FINALIZAR COMPRA DESDE EL CARRITO
 // =====================================
 
 const btnFinalizarCompra = document.getElementById("btnFinalizarCompra");
 
 if (btnFinalizarCompra) {
     btnFinalizarCompra.addEventListener("click", () => {
-        if (carrito.length === 0) return;
+        if (carrito.length === 0) {
+            alert("Agrega productos antes de continuar.");
+            return;
+        }
 
-        alert("¡Tu carrito está listo! Próximamente habilitaremos los datos de entrega y el proceso de compra.");
+        window.location.href = "checkout.html";
+    });
+}
+
+// =====================================
+// RESUMEN DEL PROCESO DE COMPRA
+// =====================================
+
+function actualizarResumenCheckout() {
+    const resumen = document.getElementById("resumenCheckout");
+    const totalCheckout = document.getElementById("totalCheckout");
+    const formulario = document.getElementById("formCheckout");
+
+    if (!resumen || !totalCheckout) return;
+
+    const botonConfirmar = formulario
+        ? formulario.querySelector('button[type="submit"]')
+        : null;
+
+    if (carrito.length === 0) {
+        resumen.innerHTML = `
+            <p>Tu carrito está vacío.</p>
+            <a href="productos.html" class="btn btn-outline-success">
+                Explorar productos
+            </a>
+        `;
+
+        totalCheckout.textContent = formatoPrecio.format(0);
+
+        if (botonConfirmar) {
+            botonConfirmar.disabled = true;
+        }
+
+        return;
+    }
+
+    if (botonConfirmar) {
+        botonConfirmar.disabled = false;
+    }
+
+    resumen.innerHTML = "";
+
+    carrito.forEach(producto => {
+        const elemento = document.createElement("div");
+        elemento.className = "d-flex justify-content-between gap-3 mb-3";
+
+        elemento.innerHTML = `
+            <div>
+                <strong>${producto.nombre}</strong>
+                <p class="text-muted mb-0">
+                    Cantidad: ${producto.cantidad}
+                </p>
+            </div>
+
+            <span>
+                ${formatoPrecio.format(producto.precio * producto.cantidad)}
+            </span>
+        `;
+
+        resumen.appendChild(elemento);
+    });
+
+    const total = carrito.reduce(
+        (suma, producto) => suma + producto.precio * producto.cantidad,
+        0
+    );
+
+    totalCheckout.textContent = formatoPrecio.format(total);
+}
+
+// =====================================
+// CONFIRMAR PEDIDO
+// =====================================
+
+const formCheckout = document.getElementById("formCheckout");
+
+if (formCheckout) {
+    formCheckout.addEventListener("submit", evento => {
+        evento.preventDefault();
+
+        if (!formCheckout.checkValidity()) {
+            formCheckout.reportValidity();
+            return;
+        }
+
+        if (carrito.length === 0) {
+            alert("Tu carrito está vacío. Agrega productos antes de confirmar.");
+            return;
+        }
+
+        const nombre = document.getElementById("nombre").value.trim();
+        const correo = document.getElementById("correo").value.trim();
+
+        const total = carrito.reduce(
+            (suma, producto) => suma + producto.precio * producto.cantidad,
+            0
+        );
+
+        const numeroPedido = "BOT-" + Date.now().toString().slice(-8);
+
+        const resumenPedido = carrito.map(producto => `
+            <li>
+                ${producto.nombre} - ${producto.cantidad} pieza(s)
+                - ${formatoPrecio.format(producto.precio * producto.cantidad)}
+            </li>
+        `).join("");
+
+        // VACIAR EL CARRITO DESPUÉS DE CONFIRMAR
+        carrito = [];
+        guardarCarrito();
+        actualizarCarrito();
+
+        // MOSTRAR CONFIRMACIÓN
+        const contenedor = document.getElementById("resumenCheckout");
+
+        if (contenedor) {
+            contenedor.innerHTML = `
+                <div class="text-center">
+                    <h3>¡Pedido confirmado!</h3>
+                    <p>Gracias por tu compra, ${nombre}.</p>
+                    <p><strong>Número de pedido:</strong> ${numeroPedido}</p>
+                    <p><strong>Correo:</strong> ${correo}</p>
+
+                    <hr>
+
+                    <h5>Productos solicitados</h5>
+                    <ul class="text-start">
+                        ${resumenPedido}
+                    </ul>
+
+                    <hr>
+
+                    <h4>Total: ${formatoPrecio.format(total)}</h4>
+
+                    <p class="text-muted small mt-3">
+                        Este pedido es una demostración académica.
+                        No se realizó ningún cobro ni envío real.
+                    </p>
+
+                    <a href="productos.html" class="btn btn-success mt-3">
+                        Seguir explorando
+                    </a>
+                </div>
+            `;
+        }
+
+        const totalCheckout = document.getElementById("totalCheckout");
+
+        if (totalCheckout) {
+            totalCheckout.textContent = formatoPrecio.format(total);
+        }
+
+        // OCULTAR FORMULARIO DESPUÉS DE CONFIRMAR
+        formCheckout.hidden = true;
     });
 }
 
