@@ -35,6 +35,7 @@ const filtros = document.querySelectorAll(".filtro");
 
 let categoriaActual = "todos";
 
+// MOSTRAR PRODUCTOS
 function mostrarProductos() {
     if (!listaProductos || typeof productos === "undefined") return;
 
@@ -77,11 +78,17 @@ function mostrarProductos() {
 
                 <div class="card-body d-flex flex-column">
                     <h3 class="card-title h5">${producto.nombre}</h3>
+
                     <p class="card-text">${producto.descripcion}</p>
 
                     <p class="fw-bold mt-auto">
                         ${formatoPrecio.format(producto.precio)}
                     </p>
+
+                    <a href="detalle.html?id=${producto.id}"
+                       class="btn btn-outline-success mb-2">
+                        Ver detalles
+                    </a>
 
                     <button class="btn btn-success agregar-carrito"
                             data-id="${producto.id}">
@@ -136,7 +143,7 @@ function agregarAlCarrito(id) {
     actualizarCarrito();
 }
 
-// EVENTO PARA AGREGAR
+// EVENTO PARA AGREGAR DESDE EL CATÁLOGO
 if (listaProductos) {
     listaProductos.addEventListener("click", evento => {
         const boton = evento.target.closest(".agregar-carrito");
@@ -145,6 +152,100 @@ if (listaProductos) {
 
         agregarAlCarrito(Number(boton.dataset.id));
     });
+}
+
+// =====================================
+// DETALLE INDIVIDUAL DEL PRODUCTO
+// =====================================
+
+function mostrarDetalleProducto() {
+    const contenedor = document.getElementById("detalleProducto");
+
+    if (!contenedor || typeof productos === "undefined") return;
+
+    const parametros = new URLSearchParams(window.location.search);
+    const idProducto = Number(parametros.get("id"));
+
+    const producto = productos.find(item => item.id === idProducto);
+
+    if (!producto) {
+        contenedor.innerHTML = `
+            <div class="text-center py-5">
+                <h2>Producto no encontrado</h2>
+                <p>El producto que buscas no está disponible.</p>
+                <a href="productos.html" class="btn btn-success">
+                    Volver al catálogo
+                </a>
+            </div>
+        `;
+        return;
+    }
+
+    const categorias = {
+        extractos: "Extractos botánicos",
+        aceites: "Aceites vegetales",
+        botanicos: "Aguas botánicas",
+        infusiones: "Infusiones"
+    };
+
+    contenedor.innerHTML = `
+        <div class="row align-items-center g-5">
+
+            <div class="col-md-6">
+                <img
+                    src="${producto.imagen}"
+                    alt="${producto.nombre}"
+                    class="img-fluid detalle-imagen"
+                    onerror="this.style.display='none'"
+                >
+            </div>
+
+            <div class="col-md-6">
+
+                <span class="badge text-bg-light mb-3">
+                    ${categorias[producto.categoria] || "Producto Botane"}
+                </span>
+
+                <h1 class="detalle-titulo">
+                    ${producto.nombre}
+                </h1>
+
+                <p class="detalle-descripcion">
+                    ${producto.descripcion}
+                </p>
+
+                <h2 class="detalle-precio">
+                    ${formatoPrecio.format(producto.precio)}
+                </h2>
+
+                <p>
+                    Descubre nuestra selección de productos
+                    botánicos Botane.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    id="agregarDetalle">
+                    Agregar al carrito
+                </button>
+
+                <a href="carrito.html"
+                   class="btn btn-outline-success ms-2">
+                    Ver carrito
+                </a>
+
+            </div>
+        </div>
+    `;
+
+    const botonAgregar = document.getElementById("agregarDetalle");
+
+    botonAgregar.addEventListener("click", () => {
+        agregarAlCarrito(producto.id);
+        alert("Producto agregado al carrito.");
+    });
+
 }
 
 // =====================================
@@ -343,4 +444,5 @@ if (btnFinalizarCompra) {
 // =====================================
 
 mostrarProductos();
+mostrarDetalleProducto();
 actualizarCarrito();
