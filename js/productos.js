@@ -1,104 +1,99 @@
 
-// =====================================
-// BOTANE - CATÁLOGO DE PRODUCTOS
-// Datos de demostración
-// =====================================
-
 const productos = [
     {
         id: 1,
-        nombre: "Extracto de Manzanilla",
+        nombre: "Extracto de manzanilla",
         categoria: "extractos",
-        descripcion: "Extracto botánico de manzanilla en presentación con gotero.",
-        precio: 145,
-        imagen: "img/manzanilla.webp"
+        descripcion: "Preparación botánica en frasco con gotero.",
+        precio: 180,
+        imagen: "https://images.unsplash.com/photo-1547887538-e3a2f32cb1cc?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 2,
-        nombre: "Extracto de Lavanda",
+        nombre: "Extracto de lavanda",
         categoria: "extractos",
-        descripcion: "Preparación botánica de lavanda en frasco con gotero.",
-        precio: 155,
-        imagen: "img/lavanda.webp"
+        descripcion: "Preparación botánica en frasco con gotero.",
+        precio: 195,
+        imagen: "https://images.unsplash.com/photo-1499002238440-d264edd596ec?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 3,
-        nombre: "Extracto de Romero",
+        nombre: "Extracto de romero",
         categoria: "extractos",
-        descripcion: "Extracto de romero en presentación práctica.",
-        precio: 135,
-        imagen: "img/romero.webp"
+        descripcion: "Preparación botánica en frasco con gotero.",
+        precio: 175,
+        imagen: "https://images.unsplash.com/photo-1515586000433-45406d8e6662?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 4,
-        nombre: "Extracto de Caléndula",
+        nombre: "Extracto de caléndula",
         categoria: "extractos",
-        descripcion: "Preparación botánica de caléndula.",
-        precio: 150,
-        imagen: "img/calendula.webp"
+        descripcion: "Preparación botánica en frasco con gotero.",
+        precio: 190,
+        imagen: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 5,
-        nombre: "Aceite de Jojoba",
-        categoria: "aceites",
-        descripcion: "Aceite vegetal de jojoba en presentación individual.",
-        precio: 190,
-        imagen: "img/jojoba.webp"
+        nombre: "Extracto de árnica",
+        categoria: "extractos",
+        descripcion: "Preparación botánica en frasco con gotero.",
+        precio: 185,
+        imagen: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 6,
-        nombre: "Aceite de Almendras",
-        categoria: "aceites",
-        descripcion: "Aceite vegetal de almendras.",
-        precio: 165,
-        imagen: "img/almendras.webp"
+        nombre: "Extracto de damiana",
+        categoria: "extractos",
+        descripcion: "Preparación botánica en frasco con gotero.",
+        precio: 200,
+        imagen: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 7,
-        nombre: "Aceite de Coco",
+        nombre: "Aceite de jojoba",
         categoria: "aceites",
-        descripcion: "Aceite vegetal de coco.",
-        precio: 175,
-        imagen: "img/coco.webp"
+        descripcion: "Aceite de origen vegetal en presentación de 30 ml.",
+        precio: 220,
+        imagen: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 8,
-        nombre: "Aceite de Argán",
+        nombre: "Aceite de almendras",
         categoria: "aceites",
-        descripcion: "Aceite vegetal de argán.",
-        precio: 220,
-        imagen: "img/argan.webp"
+        descripcion: "Aceite vegetal en presentación de 30 ml.",
+        precio: 160,
+        imagen: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 9,
-        nombre: "Infusión de Manzanilla",
-        categoria: "infusiones",
-        descripcion: "Selección de flores secas de manzanilla.",
-        precio: 95,
-        imagen: "img/infusion-manzanilla.webp"
+        nombre: "Agua floral de rosas",
+        categoria: "botanicos",
+        descripcion: "Preparación aromática en presentación de 100 ml.",
+        precio: 145,
+        imagen: "https://images.unsplash.com/photo-1494972308805-463bc619d34e?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 10,
-        nombre: "Infusión de Damiana",
-        categoria: "infusiones",
-        descripcion: "Planta seca de damiana para infusión.",
-        precio: 105,
-        imagen: "img/damiana.webp"
+        nombre: "Agua floral de lavanda",
+        categoria: "botanicos",
+        descripcion: "Preparación aromática en presentación de 100 ml.",
+        precio: 150,
+        imagen: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 11,
-        nombre: "Flores de Caléndula",
-        categoria: "botanicos",
-        descripcion: "Flores secas de caléndula seleccionadas.",
-        precio: 110,
-        imagen: "img/flores-calendula.webp"
+        nombre: "Infusión de hierbabuena",
+        categoria: "infusiones",
+        descripcion: "Selección de hojas secas en presentación de 20 g.",
+        precio: 95,
+        imagen: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 12,
-        nombre: "Romero Botánico",
-        categoria: "botanicos",
-        descripcion: "Romero seco para uso botánico.",
-        precio: 90,
-        imagen: "img/romero-botanico.webp"
+        nombre: "Infusión de jamaica",
+        categoria: "infusiones",
+        descripcion: "Flores secas en presentación de 50 g.",
+        precio: 85,
+        imagen: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=700&q=80"
     }
 ];
