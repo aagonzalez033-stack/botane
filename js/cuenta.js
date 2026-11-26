@@ -23,6 +23,7 @@ if (formRegistro) {
                 email: correo,
                 password: password,
                 options: {
+                    emailRedirectTo: `${window.location.origin}/cuenta.html`,
                     data: {
                         nombre_completo: nombre,
                         telefono: telefono
