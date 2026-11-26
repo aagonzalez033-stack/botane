@@ -13,10 +13,8 @@
 
 <body>
 
-    <!-- NAVEGACIÓN -->
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-
             <a class="navbar-brand" href="index.html">BOTANE</a>
 
             <button class="navbar-toggler" type="button"
@@ -30,61 +28,41 @@
 
             <div class="collapse navbar-collapse" id="menu">
                 <ul class="navbar-nav ms-auto align-items-lg-center">
-
                     <li class="nav-item">
                         <a class="nav-link" href="index.html">Inicio</a>
                     </li>
-
                     <li class="nav-item">
-                        <a class="nav-link active" href="productos.html" aria-current="page">
-                            Productos
-                        </a>
+                        <a class="nav-link active" href="productos.html" aria-current="page">Productos</a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link" href="nosotros.html">Nosotros</a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link" href="contacto.html">Contacto</a>
                     </li>
-
                     <li class="nav-item">
                         <a class="btn btn-success ms-lg-2" href="carrito.html">
-                            Carrito
-                            <span id="contadorCarrito">0</span>
+                            Carrito <span id="contadorCarrito">0</span>
                         </a>
                     </li>
-
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- ENCABEZADO -->
     <header class="hero">
         <div class="container">
             <h1>Nuestros productos</h1>
-
-            <p>
-                Descubre nuestra selección de productos botánicos
-                y encuentra el que buscas.
-            </p>
+            <p>Descubre nuestra selección de productos botánicos y encuentra el que buscas.</p>
         </div>
     </header>
 
-    <!-- CATÁLOGO -->
     <main>
         <section id="catalogo">
             <div class="container">
-
                 <h2 class="section-title">Explora el catálogo</h2>
+                <p class="section-description">Conoce nuestras diferentes categorías.</p>
 
-                <p class="section-description">
-                    Conoce nuestras diferentes categorías.
-                </p>
-
-                <!-- BUSCADOR -->
                 <div class="row justify-content-center mb-4">
                     <div class="col-md-7">
                         <input
@@ -92,73 +70,34 @@
                             id="buscador"
                             class="form-control"
                             placeholder="Buscar productos..."
-                            aria-label="Buscar productos"
-                        >
+                            aria-label="Buscar productos">
                     </div>
                 </div>
 
-                <!-- FILTROS DE CATEGORÍAS -->
                 <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
-
-                    <button
-                        type="button"
-                        class="btn btn-outline-success filtro activo"
-                        data-categoria="todos">
-                        Todos
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-outline-success filtro"
-                        data-categoria="extractos">
-                        Extractos
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-outline-success filtro"
-                        data-categoria="aceites">
-                        Aceites
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-outline-success filtro"
-                        data-categoria="botanicos">
-                        Aguas botánicas
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-outline-success filtro"
-                        data-categoria="infusiones">
-                        Infusiones
-                    </button>
-
+                    <button type="button" class="btn btn-outline-success filtro activo" data-categoria="todos">Todos</button>
+                    <button type="button" class="btn btn-outline-success filtro" data-categoria="extractos">Extractos</button>
+                    <button type="button" class="btn btn-outline-success filtro" data-categoria="aceites">Aceites</button>
+                    <button type="button" class="btn btn-outline-success filtro" data-categoria="botanicos">Aguas botánicas</button>
+                    <button type="button" class="btn btn-outline-success filtro" data-categoria="infusiones">Infusiones</button>
                 </div>
 
-                <!-- PRODUCTOS GENERADOS CON JAVASCRIPT -->
                 <div class="row g-4" id="listaProductos"></div>
-
             </div>
         </section>
     </main>
 
-    <!-- PIE DE PÁGINA -->
     <footer>
         <div class="container">
-
             <h4>BOTANE</h4>
-
             <p>La naturaleza en cada detalle.</p>
-
             <p>© 2026 Botane. Todos los derechos reservados.</p>
-
         </div>
     </footer>
 
-    <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
     <script src="js/productos.js"></script>
     <script src="js/app.js"></script>
 
