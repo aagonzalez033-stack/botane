@@ -10,7 +10,10 @@ let carrito = [];
 
 try {
     carrito = JSON.parse(localStorage.getItem(CLAVE_CARRITO)) || [];
-    if (!Array.isArray(carrito)) carrito = [];
+
+    if (!Array.isArray(carrito)) {
+        carrito = [];
+    }
 } catch (error) {
     carrito = [];
 }
@@ -21,9 +24,78 @@ const formatoPrecio = new Intl.NumberFormat("es-MX", {
     currency: "MXN"
 });
 
+// FUNCIONES AUXILIARES
+function escaparHTML(valor) {
+    return String(valor ?? "").replace(/[&<>"']/g, caracter => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[caracter]);
+}
+
+function obtenerProductos() {
+    return typeof productos !== "undefined" && Array.isArray(productos)
+        ? productos
+        : [];
+}
+
+function normalizarTexto(texto) {
+    return String(texto ?? "").trim().toLowerCase();
+}
+
 // GUARDAR CARRITO
 function guardarCarrito() {
     localStorage.setItem(CLAVE_CARRITO, JSON.stringify(carrito));
+}
+
+// =====================================
+// SINCRONIZAR CARRITO CON SUPABASE
+// =====================================
+
+function sincronizarCarritoConProductos() {
+    const productosDisponibles = obtenerProductos();
+
+    if (productosDisponibles.length === 0 || carrito.length === 0) {
+        return;
+    }
+
+    const carritoActualizado = [];
+
+    carrito.forEach(item => {
+        const productoActual = productosDisponibles.find(
+            producto => String(producto.id) === String(item.id)
+        ) || productosDisponibles.find(
+            producto => normalizarTexto(producto.nombre) === normalizarTexto(item.nombre)
+        );
+
+        const cantidad = Math.max(1, parseInt(item.cantidad, 10) || 1);
+
+        if (productoActual) {
+            const existente = carritoActualizado.find(
+                producto => String(producto.id) === String(productoActual.id)
+            );
+
+            if (existente) {
+                existente.cantidad += cantidad;
+            } else {
+                carritoActualizado.push({
+                    ...productoActual,
+                    cantidad
+                });
+            }
+        } else {
+            carritoActualizado.push({
+                ...item,
+                id: String(item.id),
+                cantidad
+            });
+        }
+    });
+
+    carrito = carritoActualizado;
+    guardarCarrito();
 }
 
 // =====================================
@@ -38,18 +110,31 @@ let categoriaActual = "todos";
 
 // MOSTRAR PRODUCTOS
 function mostrarProductos() {
-    if (!listaProductos || typeof productos === "undefined") return;
+    if (!listaProductos) return;
 
-    const busqueda = buscador ? buscador.value.toLowerCase() : "";
+    const productosDisponibles = obtenerProductos();
 
-    const productosFiltrados = productos.filter(producto => {
+    if (productosDisponibles.length === 0) {
+        listaProductos.innerHTML = `
+            <div class="col-12 text-center">
+                <p>No encontramos productos disponibles.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const busqueda = buscador
+        ? normalizarTexto(buscador.value)
+        : "";
+
+    const productosFiltrados = productosDisponibles.filter(producto => {
         const coincideCategoria =
             categoriaActual === "todos" ||
             producto.categoria === categoriaActual;
 
         const coincideBusqueda =
-            producto.nombre.toLowerCase().includes(busqueda) ||
-            producto.descripcion.toLowerCase().includes(busqueda);
+            normalizarTexto(producto.nombre).includes(busqueda) ||
+            normalizarTexto(producto.descripcion).includes(busqueda);
 
         return coincideCategoria && coincideBusqueda;
     });
@@ -71,28 +156,32 @@ function mostrarProductos() {
 
         tarjeta.innerHTML = `
             <div class="card h-100">
-                <img src="${producto.imagen}"
+                <img src="${escaparHTML(producto.imagen)}"
                      class="card-img-top"
-                     alt="${producto.nombre}"
+                     alt="${escaparHTML(producto.nombre)}"
                      loading="lazy"
                      onerror="this.style.display='none'">
 
                 <div class="card-body d-flex flex-column">
-                    <h3 class="card-title h5">${producto.nombre}</h3>
+                    <h3 class="card-title h5">
+                        ${escaparHTML(producto.nombre)}
+                    </h3>
 
-                    <p class="card-text">${producto.descripcion}</p>
-
-                    <p class="fw-bold mt-auto">
-                        ${formatoPrecio.format(producto.precio)}
+                    <p class="card-text">
+                        ${escaparHTML(producto.descripcion)}
                     </p>
 
-                    <a href="detalle.html?id=${producto.id}"
+                    <p class="fw-bold mt-auto">
+                        ${formatoPrecio.format(Number(producto.precio) || 0)}
+                    </p>
+
+                    <a href="detalle.html?id=${encodeURIComponent(producto.id)}"
                        class="btn btn-outline-success mb-2">
                         Ver detalles
                     </a>
 
                     <button class="btn btn-success agregar-carrito"
-                            data-id="${producto.id}">
+                            data-id="${escaparHTML(producto.id)}">
                         Agregar al carrito
                     </button>
                 </div>
@@ -124,12 +213,17 @@ filtros.forEach(boton => {
 // =====================================
 
 function agregarAlCarrito(id) {
-    if (typeof productos === "undefined") return;
+    const productosDisponibles = obtenerProductos();
 
-    const producto = productos.find(item => item.id === id);
+    const producto = productosDisponibles.find(
+        item => String(item.id) === String(id)
+    );
+
     if (!producto) return;
 
-    const existente = carrito.find(item => item.id === id);
+    const existente = carrito.find(
+        item => String(item.id) === String(producto.id)
+    );
 
     if (existente) {
         existente.cantidad++;
@@ -151,7 +245,7 @@ if (listaProductos) {
 
         if (!boton) return;
 
-        agregarAlCarrito(Number(boton.dataset.id));
+        agregarAlCarrito(boton.dataset.id);
     });
 }
 
@@ -162,12 +256,14 @@ if (listaProductos) {
 function mostrarDetalleProducto() {
     const contenedor = document.getElementById("detalleProducto");
 
-    if (!contenedor || typeof productos === "undefined") return;
+    if (!contenedor) return;
 
     const parametros = new URLSearchParams(window.location.search);
-    const idProducto = Number(parametros.get("id"));
+    const idProducto = parametros.get("id");
 
-    const producto = productos.find(item => item.id === idProducto);
+    const producto = obtenerProductos().find(
+        item => String(item.id) === String(idProducto)
+    );
 
     if (!producto) {
         contenedor.innerHTML = `
@@ -189,13 +285,18 @@ function mostrarDetalleProducto() {
         infusiones: "Infusiones"
     };
 
+    const nombreCategoria = Object.prototype.hasOwnProperty.call(
+        categorias,
+        producto.categoria
+    ) ? categorias[producto.categoria] : "Producto Botane";
+
     contenedor.innerHTML = `
         <div class="row align-items-center g-5">
 
             <div class="col-md-6">
                 <img
-                    src="${producto.imagen}"
-                    alt="${producto.nombre}"
+                    src="${escaparHTML(producto.imagen)}"
+                    alt="${escaparHTML(producto.nombre)}"
                     class="img-fluid detalle-imagen"
                     onerror="this.style.display='none'"
                 >
@@ -204,19 +305,19 @@ function mostrarDetalleProducto() {
             <div class="col-md-6">
 
                 <span class="badge text-bg-light mb-3">
-                    ${categorias[producto.categoria] || "Producto Botane"}
+                    ${escaparHTML(nombreCategoria)}
                 </span>
 
                 <h1 class="detalle-titulo">
-                    ${producto.nombre}
+                    ${escaparHTML(producto.nombre)}
                 </h1>
 
                 <p class="detalle-descripcion">
-                    ${producto.descripcion}
+                    ${escaparHTML(producto.descripcion)}
                 </p>
 
                 <h2 class="detalle-precio">
-                    ${formatoPrecio.format(producto.precio)}
+                    ${formatoPrecio.format(Number(producto.precio) || 0)}
                 </h2>
 
                 <p>
@@ -253,14 +354,18 @@ function mostrarDetalleProducto() {
 // =====================================
 
 function modificarCantidad(id, cambio) {
-    const producto = carrito.find(item => item.id === id);
+    const producto = carrito.find(
+        item => String(item.id) === String(id)
+    );
 
     if (!producto) return;
 
     producto.cantidad += cambio;
 
     if (producto.cantidad <= 0) {
-        carrito = carrito.filter(item => item.id !== id);
+        carrito = carrito.filter(
+            item => String(item.id) !== String(id)
+        );
     }
 
     guardarCarrito();
@@ -268,7 +373,9 @@ function modificarCantidad(id, cambio) {
 }
 
 function eliminarProducto(id) {
-    carrito = carrito.filter(item => item.id !== id);
+    carrito = carrito.filter(
+        item => String(item.id) !== String(id)
+    );
 
     guardarCarrito();
     actualizarCarrito();
@@ -280,11 +387,14 @@ function eliminarProducto(id) {
 
 function actualizarCarrito() {
     const cantidadTotal = carrito.reduce(
-        (total, producto) => total + producto.cantidad, 0
+        (total, producto) => total + producto.cantidad,
+        0
     );
 
     const precioTotal = carrito.reduce(
-        (total, producto) => total + producto.precio * producto.cantidad, 0
+        (total, producto) =>
+            total + (Number(producto.precio) || 0) * producto.cantidad,
+        0
     );
 
     // CONTADOR DEL MENÚ
@@ -311,21 +421,22 @@ function actualizarCarrito() {
 
             elemento.innerHTML = `
                 <div>
-                    <strong>${producto.nombre}</strong>
+                    <strong>${escaparHTML(producto.nombre)}</strong>
                     <p class="mb-0">
-                        ${producto.cantidad} x ${formatoPrecio.format(producto.precio)}
+                        ${producto.cantidad} x
+                        ${formatoPrecio.format(Number(producto.precio) || 0)}
                     </p>
                 </div>
 
                 <div class="d-flex gap-1">
                     <button class="btn btn-sm btn-outline-success"
-                        data-accion="menos" data-id="${producto.id}">−</button>
+                        data-accion="menos" data-id="${escaparHTML(producto.id)}">−</button>
 
                     <button class="btn btn-sm btn-outline-success"
-                        data-accion="mas" data-id="${producto.id}">+</button>
+                        data-accion="mas" data-id="${escaparHTML(producto.id)}">+</button>
 
                     <button class="btn btn-sm btn-outline-danger"
-                        data-accion="eliminar" data-id="${producto.id}">×</button>
+                        data-accion="eliminar" data-id="${escaparHTML(producto.id)}">×</button>
                 </div>
             `;
 
@@ -355,28 +466,33 @@ function actualizarCarrito() {
             const fila = document.createElement("tr");
 
             fila.innerHTML = `
-                <td>${producto.nombre}</td>
-                <td>${formatoPrecio.format(producto.precio)}</td>
+                <td>${escaparHTML(producto.nombre)}</td>
+
+                <td>
+                    ${formatoPrecio.format(Number(producto.precio) || 0)}
+                </td>
 
                 <td>
                     <div class="d-flex align-items-center gap-2">
                         <button class="btn btn-sm btn-outline-success"
-                            data-accion="menos" data-id="${producto.id}">−</button>
+                            data-accion="menos" data-id="${escaparHTML(producto.id)}">−</button>
 
                         <span>${producto.cantidad}</span>
 
                         <button class="btn btn-sm btn-outline-success"
-                            data-accion="mas" data-id="${producto.id}">+</button>
+                            data-accion="mas" data-id="${escaparHTML(producto.id)}">+</button>
                     </div>
                 </td>
 
                 <td>
-                    ${formatoPrecio.format(producto.precio * producto.cantidad)}
+                    ${formatoPrecio.format(
+                        (Number(producto.precio) || 0) * producto.cantidad
+                    )}
                 </td>
 
                 <td>
                     <button class="btn btn-sm btn-outline-danger"
-                        data-accion="eliminar" data-id="${producto.id}">
+                        data-accion="eliminar" data-id="${escaparHTML(producto.id)}">
                         Eliminar
                     </button>
                 </td>
@@ -390,7 +506,6 @@ function actualizarCarrito() {
         totalCompra.textContent = formatoPrecio.format(precioTotal);
     }
 
-    // ACTUALIZAR RESUMEN DE COMPRA
     actualizarResumenCheckout();
 }
 
@@ -400,7 +515,7 @@ document.addEventListener("click", evento => {
 
     if (!boton) return;
 
-    const id = Number(boton.dataset.id);
+    const id = boton.dataset.id;
     const accion = boton.dataset.accion;
 
     if (accion === "mas") modificarCantidad(id, 1);
@@ -489,14 +604,16 @@ function actualizarResumenCheckout() {
 
         elemento.innerHTML = `
             <div>
-                <strong>${producto.nombre}</strong>
+                <strong>${escaparHTML(producto.nombre)}</strong>
                 <p class="text-muted mb-0">
                     Cantidad: ${producto.cantidad}
                 </p>
             </div>
 
             <span>
-                ${formatoPrecio.format(producto.precio * producto.cantidad)}
+                ${formatoPrecio.format(
+                    (Number(producto.precio) || 0) * producto.cantidad
+                )}
             </span>
         `;
 
@@ -504,7 +621,8 @@ function actualizarResumenCheckout() {
     });
 
     const total = carrito.reduce(
-        (suma, producto) => suma + producto.precio * producto.cantidad,
+        (suma, producto) =>
+            suma + (Number(producto.precio) || 0) * producto.cantidad,
         0
     );
 
@@ -527,81 +645,41 @@ if (formCheckout) {
         }
 
         if (carrito.length === 0) {
-            alert("Tu carrito está vacío. Agrega productos antes de confirmar.");
+            alert("Tu carrito está vacío. Agrega productos antes de continuar.");
             return;
         }
 
-        const nombre = document.getElementById("nombre").value.trim();
-        const correo = document.getElementById("correo").value.trim();
-
-        const total = carrito.reduce(
-            (suma, producto) => suma + producto.precio * producto.cantidad,
-            0
+        // Todavía no se registra ni se cobra ningún pedido.
+        // El carrito se conserva hasta integrar el proceso seguro de compra.
+        alert(
+            "El proceso de compra todavía se está configurando. " +
+            "Tu carrito se ha conservado y no se realizó ningún cobro."
         );
-
-        const numeroPedido = "BOT-" + Date.now().toString().slice(-8);
-
-        const resumenPedido = carrito.map(producto => `
-            <li>
-                ${producto.nombre} - ${producto.cantidad} pieza(s)
-                - ${formatoPrecio.format(producto.precio * producto.cantidad)}
-            </li>
-        `).join("");
-
-        // VACIAR EL CARRITO DESPUÉS DE CONFIRMAR
-        carrito = [];
-        guardarCarrito();
-        actualizarCarrito();
-
-        // MOSTRAR CONFIRMACIÓN
-        const contenedor = document.getElementById("resumenCheckout");
-
-        if (contenedor) {
-            contenedor.innerHTML = `
-                <div class="text-center">
-                    <h3>¡Pedido confirmado!</h3>
-                    <p>Gracias por tu compra, ${nombre}.</p>
-                    <p><strong>Número de pedido:</strong> ${numeroPedido}</p>
-                    <p><strong>Correo:</strong> ${correo}</p>
-
-                    <hr>
-
-                    <h5>Productos solicitados</h5>
-                    <ul class="text-start">
-                        ${resumenPedido}
-                    </ul>
-
-                    <hr>
-
-                    <h4>Total: ${formatoPrecio.format(total)}</h4>
-
-                    <p class="text-muted small mt-3">
-                        Este pedido es una demostración académica.
-                        No se realizó ningún cobro ni envío real.
-                    </p>
-
-                    <a href="productos.html" class="btn btn-success mt-3">
-                        Seguir explorando
-                    </a>
-                </div>
-            `;
-        }
-
-        const totalCheckout = document.getElementById("totalCheckout");
-
-        if (totalCheckout) {
-            totalCheckout.textContent = formatoPrecio.format(total);
-        }
-
-        // OCULTAR FORMULARIO DESPUÉS DE CONFIRMAR
-        formCheckout.hidden = true;
     });
 }
+
+// =====================================
+// CARGA DE PRODUCTOS DESDE SUPABASE
+// =====================================
+
+document.addEventListener("productosCargados", () => {
+    sincronizarCarritoConProductos();
+    mostrarProductos();
+    mostrarDetalleProducto();
+    actualizarCarrito();
+});
 
 // =====================================
 // INICIO
 // =====================================
 
-mostrarProductos();
-mostrarDetalleProducto();
 actualizarCarrito();
+
+// Por si los productos ya estaban cargados
+// antes de registrar el evento.
+if (obtenerProductos().length > 0) {
+    sincronizarCarritoConProductos();
+    mostrarProductos();
+    mostrarDetalleProducto();
+    actualizarCarrito();
+}
