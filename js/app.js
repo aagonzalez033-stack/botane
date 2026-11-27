@@ -650,7 +650,7 @@ async function cargarDatosClienteCheckout() {
 
         if (!data.user) {
             alert("Debes iniciar sesión para realizar una compra.");
-            window.location.href = "cuenta.html";
+            window.location.href = "cuenta.html?redirect=checkout.html";
             return;
         }
 
@@ -693,7 +693,7 @@ async function cargarDatosClienteCheckout() {
             "Intenta iniciar sesión nuevamente."
         );
 
-        window.location.href = "cuenta.html";
+        window.location.href = "cuenta.html?redirect=checkout.html";
     }
 }
 
@@ -744,7 +744,7 @@ if (formCheckout) {
 
             if (!sesion.user) {
                 alert("Tu sesión no está activa. Inicia sesión nuevamente.");
-                window.location.href = "cuenta.html";
+                window.location.href = "cuenta.html?redirect=checkout.html";
                 return;
             }
 
