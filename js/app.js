@@ -638,9 +638,12 @@ async function cargarDatosClienteCheckout() {
 
     if (!formulario) return;
 
+    const campoNombre = document.getElementById("nombre");
     const campoCorreo = document.getElementById("correo");
+    const campoTelefono = document.getElementById("telefono");
 
     try {
+        // 1. Obtener el usuario autenticado
         const { data, error } = await supabaseClient.auth.getUser();
 
         if (error) throw error;
@@ -651,15 +654,45 @@ async function cargarDatosClienteCheckout() {
             return;
         }
 
+        const usuario = data.user;
+
+        // 2. Consultar los datos de su perfil
+        const { data: perfil, error: errorPerfil } = await supabaseClient
+            .from("perfiles")
+            .select("nombre_completo, telefono")
+            .eq("id", usuario.id)
+            .maybeSingle();
+
+        if (errorPerfil) throw errorPerfil;
+
+        // 3. Utilizar el perfil y los metadatos como respaldo
+        if (campoNombre) {
+            campoNombre.value =
+                perfil?.nombre_completo ||
+                usuario.user_metadata?.nombre_completo ||
+                "";
+        }
+
+        if (campoTelefono) {
+            campoTelefono.value =
+                perfil?.telefono ||
+                usuario.user_metadata?.telefono ||
+                "";
+        }
+
         if (campoCorreo) {
-            campoCorreo.value = data.user.email || "";
+            campoCorreo.value = usuario.email || "";
             campoCorreo.readOnly = true;
         }
 
     } catch (error) {
         console.error("Error al obtener los datos del cliente:", error);
 
-        alert("No se pudo verificar tu sesión. Inicia sesión nuevamente.");
+        alert(
+            "No se pudieron cargar los datos de tu cuenta. " +
+            "Intenta iniciar sesión nuevamente."
+        );
+
         window.location.href = "cuenta.html";
     }
 }
