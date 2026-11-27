@@ -649,11 +649,46 @@ if (formCheckout) {
             return;
         }
 
-        // Todavía no se registra ni se cobra ningún pedido.
-        // El carrito se conserva hasta integrar el proceso seguro de compra.
+        const metodoPago = document.getElementById("metodoPago").value;
+
+        if (!metodoPago) {
+            alert("Selecciona un método de pago.");
+            return;
+        }
+
+        const pedido = {
+            cliente: {
+                nombre: document.getElementById("nombre").value.trim(),
+                correo: document.getElementById("correo").value.trim(),
+                telefono: document.getElementById("telefono").value.trim(),
+                direccion: document.getElementById("direccion").value.trim(),
+                ciudad: document.getElementById("ciudad").value.trim(),
+                codigo_postal: document.getElementById("codigoPostal").value.trim(),
+                referencias: document.getElementById("referencias").value.trim()
+            },
+
+            metodo_pago: metodoPago,
+
+            productos: carrito.map(producto => ({
+                id: producto.id,
+                nombre: producto.nombre,
+                precio: Number(producto.precio),
+                cantidad: producto.cantidad,
+                subtotal: Number(producto.precio) * producto.cantidad
+            })),
+
+            total: carrito.reduce(
+                (suma, producto) =>
+                    suma + Number(producto.precio) * producto.cantidad,
+                0
+            )
+        };
+
+        console.log("Pedido preparado:", pedido);
+
         alert(
-            "El proceso de compra todavía se está configurando. " +
-            "Tu carrito se ha conservado y no se realizó ningún cobro."
+            "Los datos del pedido se validaron correctamente. " +
+            "El registro y los pagos todavía están en configuración."
         );
     });
 }
