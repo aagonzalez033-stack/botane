@@ -630,13 +630,50 @@ function actualizarResumenCheckout() {
 }
 
 // =====================================
-// CONFIRMAR PEDIDO
+// DATOS DEL CLIENTE EN CHECKOUT
+// =====================================
+
+async function cargarDatosClienteCheckout() {
+    const formulario = document.getElementById("formCheckout");
+
+    if (!formulario) return;
+
+    const campoCorreo = document.getElementById("correo");
+
+    try {
+        const { data, error } = await supabaseClient.auth.getUser();
+
+        if (error) throw error;
+
+        if (!data.user) {
+            alert("Debes iniciar sesión para realizar una compra.");
+            window.location.href = "cuenta.html";
+            return;
+        }
+
+        if (campoCorreo) {
+            campoCorreo.value = data.user.email || "";
+            campoCorreo.readOnly = true;
+        }
+
+    } catch (error) {
+        console.error("Error al obtener los datos del cliente:", error);
+
+        alert("No se pudo verificar tu sesión. Inicia sesión nuevamente.");
+        window.location.href = "cuenta.html";
+    }
+}
+
+cargarDatosClienteCheckout();
+
+// =====================================
+// CONFIRMAR Y REGISTRAR PEDIDO
 // =====================================
 
 const formCheckout = document.getElementById("formCheckout");
 
 if (formCheckout) {
-    formCheckout.addEventListener("submit", evento => {
+    formCheckout.addEventListener("submit", async evento => {
         evento.preventDefault();
 
         if (!formCheckout.checkValidity()) {
@@ -649,47 +686,107 @@ if (formCheckout) {
             return;
         }
 
-        const metodoPago = document.getElementById("metodoPago").value;
+        const metodoPago = document.getElementById("metodoPago")?.value;
 
         if (!metodoPago) {
             alert("Selecciona un método de pago.");
             return;
         }
 
-        const pedido = {
-            cliente: {
-                nombre: document.getElementById("nombre").value.trim(),
-                correo: document.getElementById("correo").value.trim(),
-                telefono: document.getElementById("telefono").value.trim(),
-                direccion: document.getElementById("direccion").value.trim(),
-                ciudad: document.getElementById("ciudad").value.trim(),
-                codigo_postal: document.getElementById("codigoPostal").value.trim(),
-                referencias: document.getElementById("referencias").value.trim()
-            },
-
-            metodo_pago: metodoPago,
-
-            productos: carrito.map(producto => ({
-                id: producto.id,
-                nombre: producto.nombre,
-                precio: Number(producto.precio),
-                cantidad: producto.cantidad,
-                subtotal: Number(producto.precio) * producto.cantidad
-            })),
-
-            total: carrito.reduce(
-                (suma, producto) =>
-                    suma + Number(producto.precio) * producto.cantidad,
-                0
-            )
-        };
-
-        console.log("Pedido preparado:", pedido);
-
-        alert(
-            "Los datos del pedido se validaron correctamente. " +
-            "El registro y los pagos todavía están en configuración."
+        const botonConfirmar = formCheckout.querySelector(
+            'button[type="submit"]'
         );
+
+        try {
+            if (botonConfirmar) {
+                botonConfirmar.disabled = true;
+                botonConfirmar.textContent = "Registrando pedido...";
+            }
+
+            // 1. Verificar sesión del cliente
+            const { data: sesion, error: errorSesion } =
+                await supabaseClient.auth.getUser();
+
+            if (errorSesion) throw errorSesion;
+
+            if (!sesion.user) {
+                alert("Tu sesión no está activa. Inicia sesión nuevamente.");
+                window.location.href = "cuenta.html";
+                return;
+            }
+
+            // 2. Preparar productos para Supabase
+            // Solo enviamos identificador y cantidad.
+            // Los precios se consultan directamente en la base de datos.
+            const productosPedido = carrito.map(producto => ({
+                id: producto.id,
+                cantidad: Math.max(1, parseInt(producto.cantidad, 10) || 1)
+            }));
+
+            // 3. Registrar pedido mediante la función segura
+            const { data: pedidoId, error } = await supabaseClient.rpc(
+                "crear_pedido",
+                {
+                    p_nombre_entrega: document.getElementById("nombre").value.trim(),
+                    p_telefono_entrega: document.getElementById("telefono").value.trim(),
+                    p_direccion: document.getElementById("direccion").value.trim(),
+                    p_ciudad: document.getElementById("ciudad").value.trim(),
+                    p_codigo_postal: document.getElementById("codigoPostal").value.trim(),
+                    p_referencias: document.getElementById("referencias").value.trim(),
+                    p_metodo_pago: metodoPago,
+                    p_productos: productosPedido
+                }
+            );
+
+            if (error) throw error;
+
+            if (!pedidoId) {
+                throw new Error("No se recibió el identificador del pedido.");
+            }
+
+            // 4. Limpiar carrito solamente si se registró correctamente
+            carrito = [];
+            guardarCarrito();
+            actualizarCarrito();
+
+            // 5. Confirmar registro
+            alert(
+                "¡Tu pedido fue registrado correctamente en Botane!\n\n" +
+                "Número de pedido: " + pedidoId + "\n\n" +
+                "Estado: Pendiente\n" +
+                "Pago: Pendiente"
+            );
+
+            formCheckout.reset();
+
+            // Conservar el correo de la cuenta
+            const campoCorreo = document.getElementById("correo");
+
+            if (campoCorreo) {
+                campoCorreo.value = sesion.user.email || "";
+                campoCorreo.readOnly = true;
+            }
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        } catch (error) {
+            console.error("Error al registrar el pedido:", error);
+
+            alert(
+                "No se pudo registrar tu pedido.\n\n" +
+                error.message +
+                "\n\nTu carrito se conserva para que puedas intentarlo nuevamente."
+            );
+
+        } finally {
+            if (botonConfirmar) {
+                botonConfirmar.disabled = carrito.length === 0;
+                botonConfirmar.textContent = "Confirmar pedido";
+            }
+        }
     });
 }
 
