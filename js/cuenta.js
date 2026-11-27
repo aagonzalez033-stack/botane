@@ -3,7 +3,19 @@
 // BOTANE | REGISTRO E INICIO DE SESIÓN
 // ==========================================
 
+// DESTINO DESPUÉS DE INICIAR SESIÓN
+function obtenerDestino() {
+    const parametros = new URLSearchParams(window.location.search);
+    const destino = parametros.get("redirect");
+
+    // Solo permitimos regresar al checkout.
+    return destino === "checkout.html" ? "checkout.html" : null;
+}
+
+// ==========================================
 // REGISTRO DE CLIENTES
+// ==========================================
+
 const formRegistro = document.getElementById("formRegistro");
 
 if (formRegistro) {
@@ -19,11 +31,22 @@ if (formRegistro) {
         mensaje.textContent = "Creando tu cuenta...";
 
         try {
+            const destino = obtenerDestino();
+
+            const urlConfirmacion = new URL(
+                "cuenta.html",
+                window.location.origin
+            );
+
+            if (destino) {
+                urlConfirmacion.searchParams.set("redirect", destino);
+            }
+
             const { data, error } = await supabaseClient.auth.signUp({
                 email: correo,
                 password: password,
                 options: {
-                    emailRedirectTo: `${window.location.origin}/cuenta.html`,
+                    emailRedirectTo: urlConfirmacion.toString(),
                     data: {
                         nombre_completo: nombre,
                         telefono: telefono
@@ -36,20 +59,29 @@ if (formRegistro) {
             if (data.session) {
                 mensaje.textContent = "¡Tu cuenta fue creada correctamente!";
                 formRegistro.reset();
+
+                if (destino) {
+                    window.location.href = destino;
+                }
             } else {
-                mensaje.textContent = "Revisa tu correo electrónico para confirmar tu cuenta.";
+                mensaje.textContent =
+                    "Revisa tu correo electrónico para confirmar tu cuenta.";
+
                 formRegistro.reset();
             }
 
         } catch (error) {
             console.error("Error en el registro:", error);
-            mensaje.textContent = "No se pudo crear la cuenta: " + error.message;
+            mensaje.textContent =
+                "No se pudo crear la cuenta: " + error.message;
         }
     });
 }
 
-
+// ==========================================
 // INICIO DE SESIÓN
+// ==========================================
+
 const formLogin = document.getElementById("formLogin");
 
 if (formLogin) {
@@ -70,12 +102,21 @@ if (formLogin) {
 
             if (error) throw error;
 
-            mensaje.textContent = "¡Bienvenido a Botane! Sesión iniciada correctamente.";
+            mensaje.textContent =
+                "¡Bienvenido a Botane! Sesión iniciada correctamente.";
+
             formLogin.reset();
+
+            const destino = obtenerDestino();
+
+            if (destino) {
+                window.location.href = destino;
+            }
 
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
-            mensaje.textContent = "No se pudo iniciar sesión: " + error.message;
+            mensaje.textContent =
+                "No se pudo iniciar sesión: " + error.message;
         }
     });
 }
